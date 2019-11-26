@@ -3,20 +3,34 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, ImageBackground} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import db from './config';
 
 class LoginScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      users: {},
+    };
+  }
+
   componentDidMount() {
     // if (AsyncStorage.getItem('Authorization')) {
-    //   this.props.navigation.replace('DasboardScreen');
+    //   this.props.navigation.navigate('DasboardScreen');
     // } else {
-    //   setTimeout(() => {
-    //     this.props.navigation.navigate('LoginScreen');
-    //   }, 4000);
-    // }
     setTimeout(() => {
-      this.props.navigation.navigate('LoginScreen');
+      this.getAsync();
     }, 4000);
+    // }
+    // Your web app's Firebase configuration
   }
+
+  getAsync = async () => {
+    const auth = await AsyncStorage.getItem('Authorization', err =>
+      console.log('Authorization', err),
+    );
+
+    this.props.navigation.navigate(auth ? 'DasboardScreen' : 'LoginScreen');
+  };
 
   render() {
     return (

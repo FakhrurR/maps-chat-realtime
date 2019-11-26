@@ -1,9 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {Text, View, Image, Alert} from 'react-native';
+import {Text, View, Image, Alert, BackHandler} from 'react-native';
 import styles from './styles';
 import {ListItem, List, Right, Left, Body, Button} from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
+import db from './../../config';
+import Users from './../Users';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {
   TouchableOpacity,
@@ -50,6 +52,8 @@ export default class index extends Component {
           name: 'Logout',
         },
       ],
+      users: [],
+      phone: '',
     };
   }
 
@@ -96,7 +100,9 @@ export default class index extends Component {
           {
             text: 'OK',
             onPress: async () => {
-              await AsyncStorage.clear();
+              await AsyncStorage.removeItem('Authorization', err =>
+                console.log('Authorization', err),
+              );
               this.props.navigation.navigate('LoginScreen');
             },
           },
@@ -109,7 +115,7 @@ export default class index extends Component {
   render() {
     return (
       <View>
-        <ScrollView style={{flexDirection: 'column'}}>
+        <SafeAreaView style={{flexDirection: 'column'}}>
           <View
             style={{width: '100%', height: 200, backgroundColor: '#FFF6F4'}}>
             <View style={{alignItems: 'center'}}>
@@ -139,7 +145,7 @@ export default class index extends Component {
               key={item => item.id}
             />
           </SafeAreaView>
-        </ScrollView>
+        </SafeAreaView>
       </View>
     );
   }

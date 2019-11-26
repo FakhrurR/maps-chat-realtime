@@ -1,16 +1,18 @@
+/* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Alert, ImageBackground} from 'react-native';
+import {View, Text, StyleSheet, Alert, ImageBackground, BackHandler} from 'react-native';
 import {Input, Button, Form, Item} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
+import db from './config';
 
 class LoginScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
+      email: '',
       password: '',
       isMessage: false,
       hidePass: true,
@@ -23,12 +25,21 @@ class LoginScreen extends Component {
     console.log(val);
   };
 
+  validateEmail = email => {
+    let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regex.test(email);
+  };
+
   handleSubmit = async () => {
-    const {username, password} = this.state;
-    if (username === '' || password === '') {
+    const {email, password} = this.state;
+    if (email === '' || password === '') {
       this.setState({isMessage: true});
+      this.setState({email: '', password: ''});
+    } else if (!this.validateEmail(email)) {
+      this.setState({isMessage: true});
+      this.setState({email: '', password: ''});
     } else {
-      await AsyncStorage.setItem('Authorization', this.state.username);
+      await AsyncStorage.setItem('Authorization');
       this.props.navigation.navigate('DasboardScreen');
     }
   };
@@ -66,10 +77,11 @@ class LoginScreen extends Component {
                 />
                 <Input
                   style={{color: '#FFF6F4', marginBottom: 2}}
-                  placeholder="Username"
+                  placeholder="Email"
+                  keyboardType={'email-address'}
                   placeholderTextColor="#FFF6F4"
-                  value={this.state.username}
-                  onChangeText={this.handleChange('username')}
+                  value={this.state.email}
+                  onChangeText={this.handleChange('email')}
                 />
               </Item>
               <Item>
@@ -104,7 +116,7 @@ class LoginScreen extends Component {
                     color: 'red',
                     marginLeft: 10,
                   }}>
-                  Username or Password is incorrect
+                  Email or Password is incorrect
                 </Text>
               )}
             </Form>

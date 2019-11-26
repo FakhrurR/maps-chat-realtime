@@ -1,10 +1,13 @@
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {Input, Button, Form, Item, Label, Content} from 'native-base';
+import {View, Text, StyleSheet, Alert, BackHandler} from 'react-native';
+import {Input, Button, Form, Item, Label, Content, Picker} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import db from './config';
+import Users from './Dasboard/Users';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class RegisterScreen extends Component {
   constructor(props) {
@@ -14,6 +17,7 @@ class RegisterScreen extends Component {
       email: '',
       username: '',
       phone: '',
+      gender: '',
       password: '',
       isMessage: false,
       message: '',
@@ -30,22 +34,49 @@ class RegisterScreen extends Component {
     return regex.test(email);
   };
 
-  handleSubmit = () => {
-    const {name, email, username, phone, password} = this.state;
+  clearText = () => {
+    this.setState({
+      name: '',
+      email: '',
+      username: '',
+      phone: '',
+      password: '',
+      gender: '',
+    });
+  };
+
+  handleSubmit = async () => {
+    const {gender, name, email, username, phone, password} = this.state;
     if (
       name === '' ||
       email === '' ||
       username === '' ||
       phone === '' ||
-      password === ''
+      password === '' ||
+      gender === ''
     ) {
       this.setState({isMessage: true});
       this.setState({message: 'Please Fill All Field'});
+      this.clearText();
     } else if (!this.validateEmail(email)) {
       this.setState({isMessage: true});
       this.setState({message: 'Please Fill Proper Email'});
     } else {
-      alert('Success');
+      Users.username = this.state.username;
+      await AsyncStorage.setItem('Authorization');
+      db.database()
+        .ref('users/' + this.state.username)
+        .set({
+          name: this.state.name,
+          username: this.state.username,
+          email: this.state.email,
+          phone: this.state.phone,
+          password: this.state.password,
+          gender: this.state.gender,
+        });
+      Alert.alert('', 'User has insert');
+      this.clearText();
+      this.props.navigation.navigate('DasboardScreen');
     }
   };
 
@@ -57,7 +88,7 @@ class RegisterScreen extends Component {
             <TouchableOpacity
               transparent
               onPress={() => this.props.navigation.goBack()}>
-              <Icon name="chevron-left" size={20} color="#FF8FB2" />
+              <Icon name="times" size={20} color="#FF8FB2" />
             </TouchableOpacity>
           </View>
           <View style={{alignItems: 'center', marginBottom: 10, marginTop: 10}}>
@@ -97,6 +128,22 @@ class RegisterScreen extends Component {
                   onChangeText={this.handleChange('username')}
                   value={this.state.username}
                 />
+              </Item>
+              <Item style={{marginTop: 10}}>
+                <Picker
+                  selectedValue={this.state.gender}
+                  style={{
+                    height: 50,
+                    width: 100,
+                    color: '#FF8FB2',
+                  }}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.setState({gender: itemValue})
+                  }>
+                  <Picker.Item label="Choose.." value="" />
+                  <Picker.Item label="Male" value="male" />
+                  <Picker.Item label="Female" value="female" />
+                </Picker>
               </Item>
               <Item floatingLabel>
                 <Label>

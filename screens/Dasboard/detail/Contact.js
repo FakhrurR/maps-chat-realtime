@@ -28,18 +28,21 @@ export default class index extends Component {
           name: 'Koko',
           status: 'Offline',
           image: require('./../../../assets/person.jpg'),
+          number: '08131931313',
         },
         {
           id: '2',
           name: 'Chici',
           status: 'Online',
           image: require('./../../../assets/person.jpg'),
+          number: '08131931312',
         },
         {
           id: '3',
           name: 'Lala',
           status: 'Offline',
           image: require('./../../../assets/person.jpg'),
+          number: '08131931213',
         },
       ],
     };
@@ -48,7 +51,7 @@ export default class index extends Component {
   renderRow = ({item}) => {
     return (
       <TouchableOpacity
-        onPress={() => this.props.navigation.navigate('ChatPerson')}>
+        onPress={() => this.props.navigation.navigate('ChatPerson', item)}>
         <View
           style={{
             flexDirection: 'row',
@@ -59,7 +62,9 @@ export default class index extends Component {
             marginTop: 20,
           }}>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('PersonDetail')}>
+            onPress={() =>
+              this.props.navigation.navigate('PersonDetail', item)
+            }>
             <View>
               <Image
                 source={item.image}

@@ -61,7 +61,7 @@ class EditProfile extends Component {
             <TouchableOpacity
               transparent
               onPress={() => this.props.navigation.goBack()}>
-              <Icon name="chevron-left" size={20} color="#FF8FB2" />
+              <Icon name="times" size={20} color="#FF8FB2" />
             </TouchableOpacity>
           </View>
           <View style={{alignItems: 'center', marginBottom: 10, marginTop: 10}}>

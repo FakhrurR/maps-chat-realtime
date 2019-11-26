@@ -6,6 +6,7 @@ import {FlatList, TextInput} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input} from 'native-base';
 import SafeAreaView from 'react-native-safe-area-view';
+import db from './../../config'
 
 export default class index extends Component {
   static navigationOptions = {
@@ -50,13 +51,34 @@ export default class index extends Component {
           lastChat: '10.00',
         },
       ],
+      users: [],
     };
   }
+
+  componentDidMount() {
+    this.getData();
+    console.log(this.state.users);
+  }
+
+  getData = () => {
+    db.database()
+      .ref('users')
+      .on('value', snapshot => {
+        console.log(snapshot.val());
+        let person = snapshot.val();
+        person.username = snapshot.key;
+        this.setState(prevState => {
+          return {
+            users: [...prevState.users, person],
+          };
+        });
+      });
+  };
 
   renderRow = ({item}) => {
     return (
       <TouchableOpacity
-        onPress={() => this.props.navigation.navigate('ChatPerson')}>
+        onPress={() => this.props.navigation.navigate('ChatPerson', item)}>
         <View
           style={{
             flexDirection: 'row',
@@ -67,7 +89,9 @@ export default class index extends Component {
             marginTop: 20,
           }}>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('PersonDetail')}>
+            onPress={() =>
+              this.props.navigation.navigate('PersonDetail', item)
+            }>
             <View>
               <Image
                 source={item.image}

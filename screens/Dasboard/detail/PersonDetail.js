@@ -108,7 +108,7 @@ export default class index extends Component {
             </View>
             <View style={{alignItems: 'center'}}>
               <Image
-                source={require('./../../../assets/person.jpg')}
+                source={this.props.navigation.getParam('image')}
                 style={{
                   width: 100,
                   height: 100,
@@ -121,9 +121,11 @@ export default class index extends Component {
               />
               <Text
                 style={{color: '#FF8FB2', fontSize: 20, fontWeight: 'bold'}}>
-                Karin Benny
+                {this.props.navigation.getParam('name')}
               </Text>
-              <Text style={{color: 'black', fontSize: 13}}>+623488584848</Text>
+              <Text style={{color: 'black', fontSize: 13}}>
+                +{this.props.navigation.getParam('number')}
+              </Text>
             </View>
           </View>
           <SafeAreaView>

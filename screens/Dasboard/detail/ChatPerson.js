@@ -62,12 +62,12 @@ class ChatPerson extends Component {
           <Body>
             <View style={{flexDirection: 'row'}}>
               <Image
-                source={require('./../../../assets/person.jpg')}
+                source={this.props.navigation.getParam('image')}
                 style={{width: 50, height: 50, borderRadius: 50}}
               />
               <View style={{flexDirection: 'column', marginLeft: 10}}>
-                <Text style={{color: 'white', fontSize: 20}}>Koko</Text>
-                <Text style={{color: 'white', fontSize: 10}}>Offline</Text>
+                <Text style={{color: 'white', fontSize: 20}}>{this.props.navigation.getParam('name')}</Text>
+                <Text style={{color: 'white', fontSize: 10}}>{this.props.navigation.getParam('status')}</Text>
               </View>
             </View>
           </Body>
