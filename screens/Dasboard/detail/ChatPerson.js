@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconBar from 'react-native-vector-icons/FontAwesome5';
 import {GiftedChat} from 'react-native-gifted-chat';
 import db from './../../config';
+import Firebase from 'firebase';
 
 import BackButton from './../../../components/BackButton';
 import {
@@ -38,33 +39,6 @@ class ChatPerson extends Component {
       phone: this.props.navigation.getParam('phone'),
     },
     messageList: [],
-    data: [
-      {
-        id: '1',
-        name: 'Koko',
-        status: 'Offline',
-        image: require('./../../../assets/person.jpg'),
-        chat:
-          'When I was an undergraduate student, we had a requirement to complete a summer internship',
-        lastChat: '13.40',
-      },
-      {
-        id: '2',
-        name: 'Chici',
-        status: 'Online',
-        image: require('./../../../assets/person.jpg'),
-        chat: 'Where Are you?',
-        lastChat: '11.40',
-      },
-      {
-        id: '3',
-        name: 'Lala',
-        status: 'Offline',
-        image: require('./../../../assets/person.jpg'),
-        chat: 'Invite you',
-        lastChat: '10.00',
-      },
-    ],
   };
 
   componentDidMount() {
@@ -82,6 +56,19 @@ class ChatPerson extends Component {
       });
   }
 
+  convertTime = time => {
+    let d = new Date(time);
+    let c = new Date();
+    let result = (d.getHours() < 10 ? '0' : '') + d.getHours() + ':';
+    result += (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+
+    if (c.getDay() !== d.getDay()) {
+      result = d.getDay() + ' ' + d.getMonth() + ' ' + result;
+    }
+
+    return result;
+  };
+
   handleChange = key => val => {
     this.setState({[key]: val});
     console.log(val);
@@ -97,7 +84,7 @@ class ChatPerson extends Component {
       let updates = {};
       let message = {
         message: this.state.textMessage,
-        time: new Date(),
+        time: Firebase.database.ServerValue.TIMESTAMP,
         from: Users.username,
       };
       updates[
@@ -131,26 +118,42 @@ class ChatPerson extends Component {
           width: '60%',
           alignSelf: item.from === Users.username ? 'flex-end' : 'flex-start',
           backgroundColor: item.from === Users.username ? 'pink' : 'white',
-          elevation: 5,
-          borderRadius: 30,
+          elevation: 2,
+          borderRadius: 10,
           marginLeft: 5,
           marginTop: 2,
           marginBottom: 10,
         }}>
-        <Text style={{color: 'black', padding: 7, fontSize: 16}}>
-          {item.message}
-          {item.chat}
-        </Text>
-        <Text style={{color: '#eee', padding: 7, fontSize: 12}}>
-          {item.time}
-          {item.lastChat}
-        </Text>
+        <View style={{flexDirection: 'column'}}>
+          <Text
+            style={{
+              color: 'black',
+              fontSize: 13,
+              fontWeight: 'bold',
+              marginLeft: 10,
+            }}>
+            {item.from}
+          </Text>
+          <Text style={{color: 'black', padding: 7, fontSize: 16}}>
+            {item.message}
+          </Text>
+        </View>
+        <View style={{flex: 1}}>
+          <Text
+            style={{
+              color: '#eee',
+              fontSize: 12,
+              textAlign: 'right',
+              marginRight: 10,
+            }}>
+            {this.convertTime(item.time)}
+          </Text>
+        </View>
       </View>
     );
   };
 
   render() {
-    let {height, width} = Dimensions.get('window');
     return (
       <Container>
         <Header style={{backgroundColor: '#FF8FB2'}}>
@@ -184,15 +187,12 @@ class ChatPerson extends Component {
             _id: 1,
           }}
         /> */}
-
-        <SafeAreaView>
-          <FlatList
-            style={{padding: 10}}
-            data={this.state.messageList}
-            renderItem={this.ChatRow}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </SafeAreaView>
+        <FlatList
+          style={{padding: 10, marginBottom: 70}}
+          data={this.state.messageList}
+          renderItem={this.ChatRow}
+          keyExtractor={(item, index) => index.toString()}
+        />
         <View
           style={{
             flex: 1,
@@ -200,6 +200,7 @@ class ChatPerson extends Component {
             right: 0,
             bottom: 0,
             position: 'absolute',
+            backgroundColor: 'white',
           }}>
           <View
             style={{

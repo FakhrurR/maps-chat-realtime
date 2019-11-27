@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {Text, View, Image, Alert, BackHandler} from 'react-native';
+import {Text, View, Image, Alert, BackHandler, StatusBar} from 'react-native';
 import styles from './styles';
 import {ListItem, List, Right, Left, Body, Button} from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -48,12 +48,18 @@ export default class index extends Component {
         },
         {
           id: '4',
+          icon: 'map-marker-alt',
+          name: 'My Location',
+        },
+        {
+          id: '5',
           icon: 'sign-out-alt',
           name: 'Logout',
         },
       ],
       users: [],
       phone: '',
+      name: '',
     };
   }
 
@@ -62,13 +68,15 @@ export default class index extends Component {
   }
 
   getData = () => {
+    // Users.phone = this.state.phone;
+    // Users.name = this.state.name;
     db.database()
       .ref('users')
       .on('child_added', snapshot => {
-        console.log([snapshot.val(), snapshot.key]);
+        console.log([snapshot.val(), snapshot.val()]);
         let person = snapshot.val();
         person.username = snapshot.key;
-        person.phone = snapshot.key;
+        console.log(person.phone);
         this.setState(prevState => {
           return {
             users: [...prevState.users, person],
@@ -108,7 +116,7 @@ export default class index extends Component {
     console.log('Selected Item :', item);
     if (item === '1') {
       this.props.navigation.navigate('EditProfile');
-    } else if (item === '4') {
+    } else if (item === '5') {
       Alert.alert(
         'Confirm',
         'Are you sure?',
@@ -135,37 +143,40 @@ export default class index extends Component {
   render() {
     return (
       <View>
-        <SafeAreaView style={{flexDirection: 'column'}}>
-          <View
-            style={{width: '100%', height: 200, backgroundColor: '#FFF6F4'}}>
-            <View style={{alignItems: 'center'}}>
-              <Image
-                source={require('./../../../assets/blank.png')}
-                style={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: 150 / 2,
-                  borderColor: '#FFF6F4',
-                  overflow: 'hidden',
-                  borderWidth: 1,
-                  marginTop: 30,
-                }}
-              />
-              <Text
-                style={{color: '#FF8FB2', fontSize: 20, fontWeight: 'bold'}}>
-                {Users.username}
-              </Text>
-              <Text style={{color: 'black', fontSize: 13}}>+623488584848</Text>
-            </View>
-          </View>
+        <StatusBar backgroundColor="pink" barStyle="light-content" />
+        <ScrollView style={{flexDirection: 'column'}}>
           <SafeAreaView>
+            <View
+              style={{width: '100%', height: 200, backgroundColor: '#FFF6F4'}}>
+              <View style={{alignItems: 'center'}}>
+                <Image
+                  source={require('./../../../assets/blank.png')}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 150 / 2,
+                    borderColor: '#FFF6F4',
+                    overflow: 'hidden',
+                    borderWidth: 1,
+                    marginTop: 30,
+                  }}
+                />
+                <Text
+                  style={{color: '#FF8FB2', fontSize: 20, fontWeight: 'bold'}}>
+                  {Users.username}
+                </Text>
+                <Text style={{color: 'black', fontSize: 13}}>
+                  {Users.phone}
+                </Text>
+              </View>
+            </View>
             <FlatList
               data={this.state.List}
               renderItem={this.renderRow}
               key={item => item.id}
             />
           </SafeAreaView>
-        </SafeAreaView>
+        </ScrollView>
       </View>
     );
   }

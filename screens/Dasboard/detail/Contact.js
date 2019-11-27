@@ -6,6 +6,8 @@ import {FlatList, TextInput} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input} from 'native-base';
 import SafeAreaView from 'react-native-safe-area-view';
+import db from './../../config';
+import Users from './../Users';
 
 export default class index extends Component {
   static navigationOptions = {
@@ -45,8 +47,32 @@ export default class index extends Component {
           number: '08131931213',
         },
       ],
+      users: [],
     };
   }
+
+  componentDidMount() {
+    this.getData();
+  }
+
+  getData = () => {
+    db.database()
+      .ref('users')
+      .on('child_added', snapshot => {
+        console.log([snapshot.val(), snapshot.key]);
+        let person = snapshot.val();
+        person.username = snapshot.key;
+        if (person.username === Users.username) {
+          Users.username = person.username;
+        } else {
+          this.setState(prevState => {
+            return {
+              users: [...prevState.users, person],
+            };
+          });
+        }
+      });
+  };
 
   renderRow = ({item}) => {
     return (
@@ -67,7 +93,7 @@ export default class index extends Component {
             }>
             <View>
               <Image
-                source={item.image}
+                source={require('../../../assets/blank.png')}
                 style={{
                   width: 50,
                   height: 50,
@@ -84,7 +110,7 @@ export default class index extends Component {
             <View style={{flexDirection: 'row'}}>
               <View>
                 <Text style={{fontWeight: 'bold', fontSize: 20}}>
-                  {item.name}
+                  {item.username}
                 </Text>
               </View>
             </View>
@@ -118,7 +144,11 @@ export default class index extends Component {
           </TouchableOpacity>
         </View>
         <View style={{marginBottom: 10}}>
-          <FlatList data={this.state.data} renderItem={this.renderRow} />
+          <FlatList
+            data={this.state.users}
+            renderItem={this.renderRow}
+            keyExtractor={item => item.username}
+          />
         </View>
       </SafeAreaView>
     );

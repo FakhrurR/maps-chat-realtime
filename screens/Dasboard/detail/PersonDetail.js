@@ -10,6 +10,7 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native-gesture-handler';
+import db from './../../config'
 import SafeAreaView from 'react-native-safe-area-view';
 
 export default class index extends Component {
@@ -37,8 +38,28 @@ export default class index extends Component {
           name: 'Help',
         },
       ],
+      users: [],
     };
   }
+
+  getData = () => {
+    db.database()
+      .ref('users')
+      .on('child_added', snapshot => {
+        console.log([snapshot.val(), snapshot.key]);
+        let person = snapshot.val();
+        person.username = snapshot.key;
+        if (person.username === Users.username) {
+          Users.username = person.username;
+        } else {
+          this.setState(prevState => {
+            return {
+              users: [...prevState.users, person],
+            };
+          });
+        }
+      });
+  };
 
   renderRow = ({item}) => {
     return (
@@ -108,7 +129,7 @@ export default class index extends Component {
             </View>
             <View style={{alignItems: 'center'}}>
               <Image
-                source={this.props.navigation.getParam('image')}
+                source={require('./../../../assets/blank.png')}
                 style={{
                   width: 100,
                   height: 100,
@@ -121,10 +142,10 @@ export default class index extends Component {
               />
               <Text
                 style={{color: '#FF8FB2', fontSize: 20, fontWeight: 'bold'}}>
-                {this.props.navigation.getParam('name')}
+                {this.props.navigation.getParam('username')}
               </Text>
               <Text style={{color: 'black', fontSize: 13}}>
-                +{this.props.navigation.getParam('number')}
+                {this.props.navigation.getParam('phone')}
               </Text>
             </View>
           </View>

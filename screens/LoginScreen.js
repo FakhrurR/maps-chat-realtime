@@ -43,19 +43,40 @@ class LoginScreen extends Component {
     if (username === '' || password === '') {
       this.setState({isMessage: true});
       this.setState({username: '', password: ''});
-    }
-    //  else if (!this.validateEmail(email)) {
-    //   this.setState({isMessage: true});
-    //   this.setState({email: '', password: ''});
-    // }
-    else {
+    } else {
       // await AsyncStorage.setItem('Authorization');
-      Users.username = this.state.username;
-      db.database()
-        .ref('users/' + Users.username)
-        .set({username: this.state.username, password: this.state.password});
-      this.props.navigation.navigate('DasboardScreen');
+      this.getData();
     }
+  };
+
+  getData = () => {
+    Users.username = this.state.username;
+    Users.password = this.state.password;
+    db.database()
+      .ref('users')
+      .on('child_added', snapshot => {
+        console.log([snapshot.val(), snapshot.key]);
+        let person = snapshot.val();
+        person.username = snapshot.key;
+        if (
+          person.username === Users.username &&
+          person.password === Users.password
+        ) {
+          db.database()
+            .ref('users/' + Users.username)
+            .update({
+              username: this.state.username,
+              password: this.state.password,
+            });
+          this.props.navigation.navigate('DasboardScreen');
+          this.setState({isMessage: false});
+        } else {
+          this.setState({
+            isMessage: true,
+          });
+          this.setState({username: '', password: ''});
+        }
+      });
   };
 
   togglePass = () => {
@@ -130,7 +151,8 @@ class LoginScreen extends Component {
                     color: 'red',
                     marginLeft: 10,
                   }}>
-                  Email or Password is incorrect
+                  Email or Password is incorrect or you must register before
+                  enter
                 </Text>
               )}
             </Form>

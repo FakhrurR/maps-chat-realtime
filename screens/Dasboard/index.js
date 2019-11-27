@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
+import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 
@@ -14,6 +15,7 @@ import Contact from './detail/Contact';
 import EditProfile from './detail/EditProfile';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
 
 const ChatStack = createStackNavigator({
   Chat: Chat,
@@ -37,14 +39,14 @@ ChatStack.navigationOptions = ({navigation}) => {
   };
 };
 
-const BottomNavigation = createBottomTabNavigator(
+const BottomNavigation = createMaterialBottomTabNavigator(
   {
     Chat: {
       screen: ChatStack,
       navigationOptions: {
         tabBarIcon: ({tintColor}) => (
           <Icon
-            name="comments"
+            name="comment-dots"
             color={tintColor}
             size={20}
             style={{textAlign: 'center'}}
@@ -57,7 +59,7 @@ const BottomNavigation = createBottomTabNavigator(
       navigationOptions: {
         tabBarIcon: ({tintColor}) => (
           <Icon
-            name="map-marked-alt"
+            name="map-marker-alt"
             color={tintColor}
             size={20}
             style={{textAlign: 'center'}}
@@ -81,12 +83,13 @@ const BottomNavigation = createBottomTabNavigator(
   },
   {
     swipeEnabled: true,
+    resetOnBlur: true,
     tabBarOptions: {
       activeTintColor: '#FF8FB2',
+      inactiveTintColor: '#FFF6F4',
       labelStyle: {
         fontSize: 12,
       },
-      activeBackgroundColor: '#FFF6F4',
       showLabel: false,
     },
     upperCaseLabel: false,
@@ -98,6 +101,10 @@ const BottomNavigation = createBottomTabNavigator(
       backgroundColor: '#FFF6F4',
       textAlign: 'center',
     },
+    activeColor: '#FFF6F4',
+    inactiveColor: '#FDD3E4',
+    showLabel: false,
+    barStyle: {backgroundColor: '#FF8FB2'},
   },
 );
 

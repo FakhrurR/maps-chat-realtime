@@ -64,21 +64,40 @@ class RegisterScreen extends Component {
     } else {
       // await AsyncStorage.setItem('Authorization');
       Users.username = this.state.username;
+      Users.phone = this.state.phone;
+      Users.email = this.state.email;
       db.database()
-        .ref('users/' + Users.username)
-        .set({
-          name: this.state.name,
-          username: this.state.username,
-          email: this.state.email,
-          phone: this.state.phone,
-          password: this.state.password,
-          gender: this.state.gender,
+        .ref('users')
+        .on('child_added', snapshot => {
+          console.log([snapshot.val(), snapshot.key]);
+          let person = snapshot.val();
+          person.username = snapshot.key;
+          console.log(snapshot.key);
+          if (person.username === Users.username) {
+            this.setState({isMessage: true});
+            this.setState({
+              message: 'Username or Phone or email Already taken',
+            });
+          } else {
+            db.database()
+              .ref('users/' + Users.username)
+              .set({
+                name: this.state.name,
+                username: this.state.username,
+                email: this.state.email,
+                phone: this.state.phone,
+                password: this.state.password,
+                gender: this.state.gender,
+              });
+            Alert.alert('', 'User has insert success');
+            this.clearText();
+            this.props.navigation.navigate('DasboardScreen');
+          }
         });
-      Alert.alert('', 'User has insert success');
-      this.clearText();
-      this.props.navigation.navigate('DasboardScreen');
     }
   };
+
+  getData = () => {};
 
   render() {
     return (

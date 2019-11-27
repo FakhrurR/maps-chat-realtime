@@ -4,6 +4,7 @@ import {Text, View, Image, TouchableOpacity} from 'react-native';
 import styles from './styles';
 import {FlatList, TextInput} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import {Input} from 'native-base';
 import SafeAreaView from 'react-native-safe-area-view';
 import db from './../../config';
@@ -53,6 +54,7 @@ export default class index extends Component {
         },
       ],
       users: [],
+      messageList: [],
     };
   }
 
@@ -73,6 +75,25 @@ export default class index extends Component {
           this.setState(prevState => {
             return {
               users: [...prevState.users, person],
+            };
+          });
+        }
+      });
+  };
+
+  getMessage = () => {
+    db.database()
+      .ref('messages/' + 'messages')
+      .on('child_added', snapshot => {
+        console.log([snapshot.val(), snapshot.key]);
+        let person = snapshot.val();
+        person.username = snapshot.key;
+        if (person.username === Users.username) {
+          Users.username = person.username;
+        } else {
+          this.setState(prevState => {
+            return {
+              messageList: [...prevState.messageList, person],
             };
           });
         }
@@ -238,7 +259,7 @@ export default class index extends Component {
             shadowRadius: 15,
             shadowOffset: {width: 1, height: 13},
           }}>
-          <Icon name="comments" size={30} color="#fff" />
+          <Icon2 name="chat" size={30} color="#fff" />
         </TouchableOpacity>
       </SafeAreaView>
     );
