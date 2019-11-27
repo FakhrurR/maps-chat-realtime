@@ -57,6 +57,26 @@ export default class index extends Component {
     };
   }
 
+  componentDidMount() {
+    this.getData();
+  }
+
+  getData = () => {
+    db.database()
+      .ref('users')
+      .on('child_added', snapshot => {
+        console.log([snapshot.val(), snapshot.key]);
+        let person = snapshot.val();
+        person.username = snapshot.key;
+        person.phone = snapshot.key;
+        this.setState(prevState => {
+          return {
+            users: [...prevState.users, person],
+          };
+        });
+      });
+  };
+
   renderRow = ({item}) => {
     return (
       <TouchableOpacity
@@ -120,7 +140,7 @@ export default class index extends Component {
             style={{width: '100%', height: 200, backgroundColor: '#FFF6F4'}}>
             <View style={{alignItems: 'center'}}>
               <Image
-                source={require('./../../../assets/person.jpg')}
+                source={require('./../../../assets/blank.png')}
                 style={{
                   width: 100,
                   height: 100,
@@ -133,7 +153,7 @@ export default class index extends Component {
               />
               <Text
                 style={{color: '#FF8FB2', fontSize: 20, fontWeight: 'bold'}}>
-                Karin Benny
+                {Users.username}
               </Text>
               <Text style={{color: 'black', fontSize: 13}}>+623488584848</Text>
             </View>

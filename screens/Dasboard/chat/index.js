@@ -6,7 +6,8 @@ import {FlatList, TextInput} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Input} from 'native-base';
 import SafeAreaView from 'react-native-safe-area-view';
-import db from './../../config'
+import db from './../../config';
+import Users from '../Users';
 
 export default class index extends Component {
   static navigationOptions = {
@@ -57,21 +58,24 @@ export default class index extends Component {
 
   componentDidMount() {
     this.getData();
-    console.log(this.state.users);
   }
 
   getData = () => {
     db.database()
       .ref('users')
-      .on('value', snapshot => {
-        console.log(snapshot.val());
+      .on('child_added', snapshot => {
+        console.log([snapshot.val(), snapshot.key]);
         let person = snapshot.val();
         person.username = snapshot.key;
-        this.setState(prevState => {
-          return {
-            users: [...prevState.users, person],
-          };
-        });
+        if (person.username === Users.username) {
+          Users.username = person.username;
+        } else {
+          this.setState(prevState => {
+            return {
+              users: [...prevState.users, person],
+            };
+          });
+        }
       });
   };
 
@@ -129,6 +133,61 @@ export default class index extends Component {
     );
   };
 
+  _renderRow = ({item}) => {
+    return (
+      <TouchableOpacity
+        onPress={() => this.props.navigation.navigate('ChatPerson', item)}>
+        <View
+          style={{
+            flexDirection: 'row',
+            borderBottomWidth: 1,
+            borderBottomColor: '#FFF6F4',
+            marginLeft: 20,
+            marginRight: 20,
+            marginTop: 20,
+          }}>
+          <TouchableOpacity
+            onPress={() =>
+              this.props.navigation.navigate('PersonDetail', item)
+            }>
+            <View>
+              <Image
+                source={require('./../../../assets/blank.png')}
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 50 / 2,
+                  borderColor: '#FFF6F4',
+                  overflow: 'hidden',
+                  borderWidth: 1,
+                  marginBottom: 10,
+                }}
+              />
+            </View>
+          </TouchableOpacity>
+          <View style={{marginLeft: 20, flex: 1}}>
+            <View style={{flexDirection: 'row'}}>
+              <View>
+                <Text style={{fontWeight: 'bold', fontSize: 20}}>
+                  {item.username}
+                  {/* {item.gender} */}
+                </Text>
+              </View>
+              {/* <View style={{marginTop: 5, flex: 1, alignItems: 'flex-end'}}>
+                <Text style={{color: 'gray'}}>{item.lastChat}</Text>
+              </View> */}
+            </View>
+            {/* <View>
+              <Text numberOfLines={1} style={{width: 200, color: 'gray'}}>
+                {item.chat}
+              </Text>
+            </View> */}
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     return (
       <SafeAreaView style={{flex: 1, paddingBottom: 40}}>
@@ -153,7 +212,11 @@ export default class index extends Component {
           </TouchableOpacity>
         </View>
         <View style={{marginBottom: 10}}>
-          <FlatList data={this.state.data} renderItem={this.renderRow} />
+          <FlatList
+            data={this.state.users}
+            renderItem={this._renderRow}
+            keyExtractor={item => item.username}
+          />
         </View>
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('Contact')}

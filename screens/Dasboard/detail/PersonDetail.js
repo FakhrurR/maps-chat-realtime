@@ -70,7 +70,7 @@ export default class index extends Component {
   actionRow = async item => {
     console.log('Selected Item :', item);
     if (item === '1') {
-      this.props.navigation.navigate('EditProfile');
+      this.props.navigation.navigate('ChatPerson');
     } else if (item === '4') {
       Alert.alert(
         'Confirm',
@@ -103,7 +103,7 @@ export default class index extends Component {
               <TouchableOpacity
                 transparent
                 onPress={() => this.props.navigation.goBack()}>
-                <Icon name="chevron-left" size={20} color="#FF8FB2" />
+                <Icon name="times" size={20} color="#FF8FB2" />
               </TouchableOpacity>
             </View>
             <View style={{alignItems: 'center'}}>

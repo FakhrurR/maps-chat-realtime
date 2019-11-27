@@ -42,7 +42,7 @@ const navigator = createStackNavigator(
     },
   },
   {
-    initialRouteName: 'DasboardScreen',
+    initialRouteName: 'SplashScreen',
   },
 );
 

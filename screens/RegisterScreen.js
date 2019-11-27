@@ -62,10 +62,10 @@ class RegisterScreen extends Component {
       this.setState({isMessage: true});
       this.setState({message: 'Please Fill Proper Email'});
     } else {
+      // await AsyncStorage.setItem('Authorization');
       Users.username = this.state.username;
-      await AsyncStorage.setItem('Authorization');
       db.database()
-        .ref('users/' + this.state.username)
+        .ref('users/' + Users.username)
         .set({
           name: this.state.name,
           username: this.state.username,
@@ -74,7 +74,7 @@ class RegisterScreen extends Component {
           password: this.state.password,
           gender: this.state.gender,
         });
-      Alert.alert('', 'User has insert');
+      Alert.alert('', 'User has insert success');
       this.clearText();
       this.props.navigation.navigate('DasboardScreen');
     }
