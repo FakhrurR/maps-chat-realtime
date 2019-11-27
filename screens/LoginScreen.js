@@ -54,7 +54,7 @@ class LoginScreen extends Component {
     Users.password = this.state.password;
     db.database()
       .ref('users')
-      .on('child_added', snapshot => {
+      .on('child_added', async snapshot => {
         console.log([snapshot.val(), snapshot.key]);
         let person = snapshot.val();
         person.username = snapshot.key;
@@ -68,6 +68,7 @@ class LoginScreen extends Component {
               username: this.state.username,
               password: this.state.password,
             });
+          await AsyncStorage.setItem('Authorization', this.state.username);
           this.props.navigation.navigate('DasboardScreen');
           this.setState({isMessage: false});
         } else {

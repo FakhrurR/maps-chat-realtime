@@ -85,9 +85,10 @@ export default class index extends Component {
     db.database()
       .ref('messages/' + 'messages')
       .on('child_added', snapshot => {
-        console.log([snapshot.val(), snapshot.key]);
+        console.log(snapshot.val());
         let person = snapshot.val();
         person.username = snapshot.key;
+        // console.log(person.username + ' ' + snapshot.key);
         if (person.username === Users.username) {
           Users.username = person.username;
         } else {
@@ -194,9 +195,9 @@ export default class index extends Component {
                   {/* {item.gender} */}
                 </Text>
               </View>
-              {/* <View style={{marginTop: 5, flex: 1, alignItems: 'flex-end'}}>
-                <Text style={{color: 'gray'}}>{item.lastChat}</Text>
-              </View> */}
+              <View style={{marginTop: 5, flex: 1, alignItems: 'flex-end'}}>
+                <Text style={{color: 'gray'}}>{item.time}</Text>
+              </View>
             </View>
             {/* <View>
               <Text numberOfLines={1} style={{width: 200, color: 'gray'}}>

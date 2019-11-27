@@ -28,7 +28,6 @@ class LoginScreen extends Component {
     const auth = await AsyncStorage.getItem('Authorization', err =>
       console.log('Authorization', err),
     );
-
     this.props.navigation.navigate(auth ? 'DasboardScreen' : 'LoginScreen');
   };
 
