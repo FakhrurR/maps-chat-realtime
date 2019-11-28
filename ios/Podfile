@@ -38,6 +38,8 @@ target 'SocialStart' do
 
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
   target 'SocialStartTests' do
     inherit! :search_paths
     # Pods for testing

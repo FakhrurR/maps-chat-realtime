@@ -1,7 +1,14 @@
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Alert, BackHandler} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  BackHandler,
+  ActivityIndicator,
+} from 'react-native';
 import {Input, Button, Form, Item, Label, Content, Picker} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -20,6 +27,7 @@ class RegisterScreen extends Component {
       gender: '',
       password: '',
       isMessage: false,
+      isLoading: false,
       message: '',
     };
   }
@@ -46,6 +54,10 @@ class RegisterScreen extends Component {
   };
 
   handleSubmit = async () => {
+    this.setState({isLoading: true});
+    Users.username = this.state.username;
+    Users.phone = this.state.phone;
+    Users.email = this.state.email;
     const {gender, name, email, username, phone, password} = this.state;
     if (
       name === '' ||
@@ -55,49 +67,39 @@ class RegisterScreen extends Component {
       password === '' ||
       gender === ''
     ) {
+      this.setState({isLoading: false});
       this.setState({isMessage: true});
       this.setState({message: 'Please Fill All Field'});
       this.clearText();
     } else if (!this.validateEmail(email)) {
+      this.setState({isLoading: false});
       this.setState({isMessage: true});
       this.setState({message: 'Please Fill Proper Email'});
     } else {
+      this.setState({isLoading: false});
       // await AsyncStorage.setItem('Authorization');
-      Users.username = this.state.username;
-      Users.phone = this.state.phone;
-      Users.email = this.state.email;
-      db.database()
-        .ref('users')
-        .on('child_added', snapshot => {
-          console.log([snapshot.val(), snapshot.key]);
-          let person = snapshot.val();
-          person.username = snapshot.key;
-          console.log(snapshot.key);
-          if (person.username === Users.username) {
-            this.setState({isMessage: true});
-            this.setState({
-              message: 'Username or Phone or email Already taken',
+      db.auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then(() => {
+          db.database()
+            .ref('users/' + Users.username)
+            .set({
+              name: this.state.name,
+              username: this.state.username,
+              email: this.state.email,
+              phone: this.state.phone,
+              password: this.state.password,
+              gender: this.state.gender,
             });
-          } else {
-            db.database()
-              .ref('users/' + Users.username)
-              .set({
-                name: this.state.name,
-                username: this.state.username,
-                email: this.state.email,
-                phone: this.state.phone,
-                password: this.state.password,
-                gender: this.state.gender,
-              });
-            Alert.alert('', 'User has insert success');
-            this.clearText();
-            this.props.navigation.navigate('DasboardScreen');
-          }
+          this.props.navigation.navigate('DasboardScreen');
+        })
+        .catch(error => {
+          this.clearText();
+          this.setState({isMessage: true});
+          this.setState({message: error.message});
         });
     }
   };
-
-  getData = () => {};
 
   render() {
     return (
@@ -194,6 +196,9 @@ class RegisterScreen extends Component {
                     fontWeight: 'bold',
                     marginLeft: 20,
                   }}>
+                  {this.state.isLoading && (
+                    <ActivityIndicator size="small" color="#0000ff" />
+                  )}
                   {this.state.message}
                 </Label>
               )}

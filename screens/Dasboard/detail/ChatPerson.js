@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {Text, View, Image, Dimensions} from 'react-native';
+import {Text, View, Image, Dimensions, Alert} from 'react-native';
 import styles from './styles';
 import {
   TextInput,
@@ -25,6 +25,15 @@ import {
 } from 'native-base';
 import Users from '../Users';
 import SafeAreaView from 'react-native-safe-area-view';
+import Geolocation from '@react-native-community/geolocation';
+
+const {heightku, widthku} = Dimensions.get('window');
+
+const ASPECT_RATIO = widthku / heightku;
+const LONGITUDE = 0;
+const LATITUDE = 0;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 class ChatPerson extends Component {
   static navigationOptions = {
@@ -39,11 +48,19 @@ class ChatPerson extends Component {
       phone: this.props.navigation.getParam('phone'),
     },
     messageList: [],
+    region: {
+      latitude: LATITUDE,
+      longitude: LONGITUDE,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA,
+    },
   };
 
   componentDidMount() {
+    console.log(this.state.person.username);
+    console.log(Users.username);
     db.database()
-      .ref('messages/' + 'messages')
+      .ref('messages/')
       .child(Users.username)
       .child(this.state.person.username)
       .on('child_added', snapshot => {
@@ -104,7 +121,7 @@ class ChatPerson extends Component {
           msg
       ] = message;
       db.database()
-        .ref('messages')
+        .ref()
         .update(updates);
       this.setState({textMessage: ''});
     }
@@ -125,15 +142,6 @@ class ChatPerson extends Component {
           marginBottom: 10,
         }}>
         <View style={{flexDirection: 'column'}}>
-          <Text
-            style={{
-              color: 'black',
-              fontSize: 13,
-              fontWeight: 'bold',
-              marginLeft: 10,
-            }}>
-            {item.from}
-          </Text>
           <Text style={{color: 'black', padding: 7, fontSize: 16}}>
             {item.message}
           </Text>
@@ -153,6 +161,44 @@ class ChatPerson extends Component {
     );
   };
 
+  sendLocation = async () => {
+    await Geolocation.getCurrentPosition(
+      position => {
+        this.setState({
+          region: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
+          },
+        });
+      },
+      error => console.log(error.message),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+    );
+  }
+
+  handelMap = () => {
+    Alert.alert(
+      'Confirm',
+      'Share your location?',
+      [
+        {
+          text: 'No',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          // onPress: () => {
+          //   db.auth().signOut();
+          //   this.props.navigation.navigate('LoginScreen');
+          // },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
   render() {
     return (
       <Container>
@@ -169,8 +215,8 @@ class ChatPerson extends Component {
                 style={{width: 50, height: 50, borderRadius: 50}}
               />
               <View style={{flexDirection: 'column', marginLeft: 10}}>
-                <Text style={{color: 'white', fontSize: 20}}>
-                  {this.props.navigation.getParam('username')}
+                <Text style={{color: 'white', fontSize: 15}}>
+                  {this.props.navigation.getParam('name')}
                 </Text>
                 <Text style={{color: 'white', fontSize: 10}}>
                   {this.props.navigation.getParam('status')}
@@ -178,7 +224,15 @@ class ChatPerson extends Component {
               </View>
             </View>
           </Body>
-          <Right />
+          <Right>
+            <TouchableOpacity
+              onPress={() => this.handelMap()}>
+              <IconBar name="map-marker-alt" size={25} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={{marginLeft: 20}}>
+              <IconBar name="ellipsis-v" size={20} color="white" />
+            </TouchableOpacity>
+          </Right>
         </Header>
         {/* <GiftedChat
           messages={this.state.messages}

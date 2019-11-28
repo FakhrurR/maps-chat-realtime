@@ -7,12 +7,13 @@ import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 
 import Chat from './chat';
-import maps from './maps';
+import maps from './maps/Map';
 import Profile from './profile';
 import ChatPerson from './detail/ChatPerson';
 import PersonDetail from './detail/PersonDetail';
 import Contact from './detail/Contact';
 import EditProfile from './detail/EditProfile';
+import MapChat from './maps/MapChat';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
@@ -27,6 +28,11 @@ const ChatStack = createStackNavigator({
 const ProfileStack = createStackNavigator({
   Profile,
   EditProfile,
+});
+
+const MapStack = createStackNavigator({
+  Maps: maps,
+  MapChat,
 });
 
 ChatStack.navigationOptions = ({navigation}) => {

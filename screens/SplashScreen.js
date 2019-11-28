@@ -13,22 +13,26 @@ class LoginScreen extends Component {
     };
   }
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     // if (AsyncStorage.getItem('Authorization')) {
     //   this.props.navigation.navigate('DasboardScreen');
     // } else {
     setTimeout(() => {
       this.getAsync();
+      // this.props.navigation.navigate('LoginScreen');
     }, 4000);
     // }
     // Your web app's Firebase configuration
   }
 
-  getAsync = async () => {
-    const auth = await AsyncStorage.getItem('Authorization', err =>
-      console.log('Authorization', err),
-    );
-    this.props.navigation.navigate(auth ? 'DasboardScreen' : 'LoginScreen');
+  getAsync = () => {
+    const user = db.auth().currentUser;
+
+    if (user) {
+      this.props.navigation.navigate('DasboardScreen');
+    } else {
+      this.props.navigation.navigate('LoginScreen');
+    }
   };
 
   render() {

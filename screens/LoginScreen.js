@@ -8,6 +8,7 @@ import {
   Alert,
   ImageBackground,
   BackHandler,
+  ActivityIndicator,
 } from 'react-native';
 import {Input, Button, Form, Item} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -23,6 +24,8 @@ class LoginScreen extends Component {
       username: '',
       password: '',
       isMessage: false,
+      isLoading: false,
+      errorMessage: '',
       hidePass: true,
       icon: 'eye-slash',
     };
@@ -39,45 +42,26 @@ class LoginScreen extends Component {
   // };
 
   handleSubmit = async () => {
-    const {username, password} = this.state;
-    if (username === '' || password === '') {
+    // await AsyncStorage.setItem('Authorization');
+    this.setState({isLoading: true});
+    const {email, password} = this.state;
+    if (email === '' || password === '') {
+      this.setState({isLoading: false});
       this.setState({isMessage: true});
-      this.setState({username: '', password: ''});
+      this.setState({errorMessage: 'Please Fill All Field'});
     } else {
-      // await AsyncStorage.setItem('Authorization');
-      this.getData();
-    }
-  };
-
-  getData = () => {
-    Users.username = this.state.username;
-    Users.password = this.state.password;
-    db.database()
-      .ref('users')
-      .on('child_added', async snapshot => {
-        console.log([snapshot.val(), snapshot.key]);
-        let person = snapshot.val();
-        person.username = snapshot.key;
-        if (
-          person.username === Users.username &&
-          person.password === Users.password
-        ) {
-          db.database()
-            .ref('users/' + Users.username)
-            .update({
-              username: this.state.username,
-              password: this.state.password,
-            });
-          await AsyncStorage.setItem('Authorization', this.state.username);
+      db.auth()
+        .signInWithEmailAndPassword(this.state.email, this.state.password)
+        .then(() => {
           this.props.navigation.navigate('DasboardScreen');
-          this.setState({isMessage: false});
-        } else {
-          this.setState({
-            isMessage: true,
-          });
-          this.setState({username: '', password: ''});
-        }
-      });
+          this.setState({isLoading: false});
+        })
+        .catch(error => {
+          this.setState({isLoading: false});
+          this.setState({isMessage: true});
+          this.setState({errorMessage: error.message});
+        });
+    }
   };
 
   togglePass = () => {
@@ -102,6 +86,9 @@ class LoginScreen extends Component {
               START
             </Text>
           </View>
+          {this.state.isLoading && (
+            <ActivityIndicator size="large" color="#0000ff" />
+          )}
           <View style={{marginLeft: 20, marginRight: 30, marginBottom: 20}}>
             <Form>
               <Item>
@@ -113,11 +100,11 @@ class LoginScreen extends Component {
                 />
                 <Input
                   style={{color: '#FFF6F4', marginBottom: 2}}
-                  placeholder="Username"
+                  placeholder="Email"
                   keyboardType={'email-address'}
                   placeholderTextColor="#FFF6F4"
-                  value={this.state.username}
-                  onChangeText={this.handleChange('username')}
+                  value={this.state.email}
+                  onChangeText={this.handleChange('email')}
                 />
               </Item>
               <Item>
@@ -152,8 +139,7 @@ class LoginScreen extends Component {
                     color: 'red',
                     marginLeft: 10,
                   }}>
-                  Email or Password is incorrect or you must register before
-                  enter
+                  {this.state.errorMessage}
                 </Text>
               )}
             </Form>

@@ -5,16 +5,15 @@ import {View, Text, StyleSheet} from 'react-native';
 import {Input, Button, Form, Item, Label, Content} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import db from './../../config';
+import Users from './../Users';
 
 class EditProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      email: '',
-      username: '',
-      phone: '',
-      password: '',
+      name: this.props.navigation.getParam('name'),
+      phone: this.props.navigation.getParam('phone'),
       isMessage: false,
       message: '',
     };
@@ -29,27 +28,18 @@ class EditProfile extends Component {
     console.log(key + ' ' + val);
   };
 
-  validateEmail = email => {
-    let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return regex.test(email);
-  };
-
   handleSubmit = () => {
-    const {name, email, username, phone, password} = this.state;
-    if (
-      name === '' ||
-      email === '' ||
-      username === '' ||
-      phone === '' ||
-      password === ''
-    ) {
+    const {name, phone} = this.state;
+    if (name === '' || phone === '') {
       this.setState({isMessage: true});
       this.setState({message: 'Please Fill All Field'});
-    } else if (!this.validateEmail(email)) {
-      this.setState({isMessage: true});
-      this.setState({message: 'Please Fill Proper Email'});
     } else {
-      alert('Success');
+      db.database()
+        .ref('users/' + Users.username)
+        .update({
+          name: this.state.name,
+        });
+      this.props.navigation.goBack();
     }
   };
 
@@ -79,49 +69,6 @@ class EditProfile extends Component {
                   style={{color: '#FF8FB2', marginBottom: 10}}
                   onChangeText={this.handleChange('name')}
                   value={this.state.name}
-                />
-              </Item>
-              <Item floatingLabel>
-                <Label>
-                  <Text style={{color: '#FF8FB2'}}>Email</Text>
-                </Label>
-                <Input
-                  style={{color: '#FF8FB2', marginBottom: 10}}
-                  keyboardType={'email-address'}
-                  onChangeText={this.handleChange('email')}
-                  value={this.state.email}
-                />
-              </Item>
-              <Item floatingLabel>
-                <Label>
-                  <Text style={{color: '#FF8FB2'}}>Username</Text>
-                </Label>
-                <Input
-                  style={{color: '#FF8FB2', marginBottom: 10}}
-                  onChangeText={this.handleChange('username')}
-                  value={this.state.username}
-                />
-              </Item>
-              <Item floatingLabel>
-                <Label>
-                  <Text style={{color: '#FF8FB2'}}>Phone Number</Text>
-                </Label>
-                <Input
-                  style={{color: '#FF8FB2', marginBottom: 10}}
-                  keyboardType={'phone-pad'}
-                  onChangeText={this.handleChange('phone')}
-                  value={this.state.phone}
-                />
-              </Item>
-              <Item floatingLabel>
-                <Label>
-                  <Text style={{color: '#FF8FB2'}}>Password</Text>
-                </Label>
-                <Input
-                  style={{color: '#FF8FB2', marginBottom: 10}}
-                  secureTextEntry={true}
-                  onChangeText={this.handleChange('password')}
-                  value={this.state.password}
                 />
               </Item>
               {this.state.isMessage && (

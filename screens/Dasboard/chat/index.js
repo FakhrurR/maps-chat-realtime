@@ -26,33 +26,6 @@ export default class index extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [
-        {
-          id: '1',
-          name: 'Koko',
-          status: 'Offline',
-          image: require('./../../../assets/person.jpg'),
-          chat:
-            'When I was an undergraduate student, we had a requirement to complete a summer internship',
-          lastChat: '13.40',
-        },
-        {
-          id: '2',
-          name: 'Chici',
-          status: 'Online',
-          image: require('./../../../assets/person.jpg'),
-          chat: 'Where Are you?',
-          lastChat: '11.40',
-        },
-        {
-          id: '3',
-          name: 'Lala',
-          status: 'Offline',
-          image: require('./../../../assets/person.jpg'),
-          chat: 'Invite you',
-          lastChat: '10.00',
-        },
-      ],
       users: [],
       messageList: [],
     };
@@ -63,13 +36,17 @@ export default class index extends Component {
   }
 
   getData = () => {
+    const user = db.auth().currentUser.email;
+    console.log(user);
     db.database()
       .ref('users')
       .on('child_added', snapshot => {
-        console.log([snapshot.val(), snapshot.key]);
         let person = snapshot.val();
+        console.log(snapshot.key);
         person.username = snapshot.key;
-        if (person.username === Users.username) {
+        let email = person.email.toLowerCase();
+        if (user === email) {
+          Users.email = person.email;
           Users.username = person.username;
         } else {
           this.setState(prevState => {
@@ -81,80 +58,10 @@ export default class index extends Component {
       });
   };
 
-  getMessage = () => {
-    db.database()
-      .ref('messages/' + 'messages')
-      .on('child_added', snapshot => {
-        console.log(snapshot.val());
-        let person = snapshot.val();
-        person.username = snapshot.key;
-        // console.log(person.username + ' ' + snapshot.key);
-        if (person.username === Users.username) {
-          Users.username = person.username;
-        } else {
-          this.setState(prevState => {
-            return {
-              messageList: [...prevState.messageList, person],
-            };
-          });
-        }
-      });
-  };
-
-  renderRow = ({item}) => {
-    return (
-      <TouchableOpacity
-        onPress={() => this.props.navigation.navigate('ChatPerson', item)}>
-        <View
-          style={{
-            flexDirection: 'row',
-            borderBottomWidth: 1,
-            borderBottomColor: '#FFF6F4',
-            marginLeft: 20,
-            marginRight: 20,
-            marginTop: 20,
-          }}>
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate('PersonDetail', item)
-            }>
-            <View>
-              <Image
-                source={item.image}
-                style={{
-                  width: 50,
-                  height: 50,
-                  borderRadius: 50 / 2,
-                  borderColor: '#FFF6F4',
-                  overflow: 'hidden',
-                  borderWidth: 1,
-                  marginBottom: 10,
-                }}
-              />
-            </View>
-          </TouchableOpacity>
-          <View style={{marginLeft: 20, flex: 1}}>
-            <View style={{flexDirection: 'row'}}>
-              <View>
-                <Text style={{fontWeight: 'bold', fontSize: 20}}>
-                  {item.name}
-                </Text>
-              </View>
-              <View style={{marginTop: 5, flex: 1, alignItems: 'flex-end'}}>
-                <Text style={{color: 'gray'}}>{item.lastChat}</Text>
-              </View>
-            </View>
-            <View>
-              <Text numberOfLines={1} style={{width: 200, color: 'gray'}}>
-                {item.chat}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
+  // handleSearch = () => {
+    
+  // }
+  
   _renderRow = ({item}) => {
     return (
       <TouchableOpacity
@@ -191,8 +98,7 @@ export default class index extends Component {
             <View style={{flexDirection: 'row'}}>
               <View>
                 <Text style={{fontWeight: 'bold', fontSize: 20}}>
-                  {item.username}
-                  {/* {item.gender} */}
+                  {item.name}
                 </Text>
               </View>
               <View style={{marginTop: 5, flex: 1, alignItems: 'flex-end'}}>

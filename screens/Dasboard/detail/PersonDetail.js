@@ -10,6 +10,7 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native-gesture-handler';
+import Users from './../Users';
 import db from './../../config'
 import SafeAreaView from 'react-native-safe-area-view';
 

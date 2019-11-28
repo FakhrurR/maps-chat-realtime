@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {Text, View, Dimensions,StyleSheet} from 'react-native';
+import {Text, View, Dimensions, StyleSheet} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 
@@ -12,7 +12,7 @@ const LATITUDE = 0;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-export default class index extends Component {
+export default class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -78,5 +78,5 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
-  }
+  },
 });
