@@ -109,13 +109,13 @@ List of depedencies using in this project
 
 # Interface
 
- <img src="screenshot/splash.jpeg" width="256">&nbsp;&nbsp;&nbsp;
- <img src="screenshot/chat list.jpeg" width="256">&nbsp;&nbsp;&nbsp;
- <img src="screenshot/chat.jpeg" width="256">&nbsp;&nbsp;&nbsp;
- <img src="screenshot/login.jpeg" width="256">&nbsp;&nbsp;&nbsp;
- <img src="screenshot/map.jpeg" width="256">&nbsp;&nbsp;&nbsp;
- <img src="screenshot/profile.jpeg" width="256">&nbsp;&nbsp;&nbsp;
- <img src="screenshot/register.jpeg" width="256">
+ <img src="screenshots/splash.jpeg" width="256">&nbsp;&nbsp;&nbsp;
+ <img src="screenshots/chat list.jpeg" width="256">&nbsp;&nbsp;&nbsp;
+ <img src="screenshots/chat.jpeg" width="256">&nbsp;&nbsp;&nbsp;
+ <img src="screenshots/login.jpeg" width="256">&nbsp;&nbsp;&nbsp;
+ <img src="screenshots/map.jpeg" width="256">&nbsp;&nbsp;&nbsp;
+ <img src="screenshots/profile.jpeg" width="256">&nbsp;&nbsp;&nbsp;
+ <img src="screenshots/register.jpeg" width="256">
 
 
 ## License and Support
