@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from 'react-native-gesture-handler';
 import Users from './../Users';
-import db from './../../config'
+import db from './../../config';
 import SafeAreaView from 'react-native-safe-area-view';
 
 export default class index extends Component {
@@ -24,11 +24,6 @@ export default class index extends Component {
     this.state = {
       List: [
         {
-          id: '1',
-          icon: 'comments',
-          name: 'Chat',
-        },
-        {
           id: '2',
           icon: 'users',
           name: 'Invite a Friend',
@@ -40,17 +35,26 @@ export default class index extends Component {
         },
       ],
       users: [],
+      imageProfile: this.props.navigation.getParam('photo'),
     };
   }
 
+  componentDidMount() {
+    this.getData();
+  }
+
   getData = () => {
+    const user = db.auth().currentUser.email;
+    console.log(user);
     db.database()
       .ref('users')
       .on('child_added', snapshot => {
-        console.log([snapshot.val(), snapshot.key]);
         let person = snapshot.val();
+        console.log(snapshot.key);
         person.username = snapshot.key;
-        if (person.username === Users.username) {
+        let email = person.email.toLowerCase();
+        if (user === email) {
+          Users.email = person.email;
           Users.username = person.username;
         } else {
           this.setState(prevState => {
@@ -91,8 +95,10 @@ export default class index extends Component {
 
   actionRow = async item => {
     console.log('Selected Item :', item);
-    if (item === '1') {
-      this.props.navigation.navigate('ChatPerson');
+    if (item === '2') {
+      Alert.alert('Warning!!', 'Coming Soon');
+    } else if (item === '3') {
+      Alert.alert('Help', 'Maps And Chat Realtime');
     } else if (item === '4') {
       Alert.alert(
         'Confirm',
@@ -129,24 +135,45 @@ export default class index extends Component {
               </TouchableOpacity>
             </View>
             <View style={{alignItems: 'center'}}>
-              <Image
-                source={require('./../../../assets/blank.png')}
-                style={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: 150 / 2,
-                  borderColor: '#FFF6F4',
-                  overflow: 'hidden',
-                  borderWidth: 1,
-                  marginTop: 30,
-                }}
-              />
+              {this.state.imageProfile && (
+                <Image
+                  source={{
+                    uri: this.state.imageProfile,
+                  }}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 150 / 2,
+                    borderColor: '#FFF6F4',
+                    overflow: 'hidden',
+                    borderWidth: 1,
+                    marginTop: 30,
+                  }}
+                />
+              )}
+              {!this.state.imageProfile && (
+                <Image
+                  source={require('./../../../assets/blank.png')}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 150 / 2,
+                    borderColor: '#FFF6F4',
+                    overflow: 'hidden',
+                    borderWidth: 1,
+                    marginTop: 30,
+                  }}
+                />
+              )}
               <Text
                 style={{color: '#FF8FB2', fontSize: 20, fontWeight: 'bold'}}>
-                {this.props.navigation.getParam('username')}
+                {this.props.navigation.getParam('name')}
               </Text>
               <Text style={{color: 'black', fontSize: 13}}>
                 {this.props.navigation.getParam('phone')}
+              </Text>
+              <Text style={{color: 'black', fontSize: 13}}>
+                {this.props.navigation.getParam('email')}
               </Text>
             </View>
           </View>

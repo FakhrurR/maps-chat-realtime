@@ -44,8 +44,10 @@ class ChatPerson extends Component {
     textMessage: '',
     // messages: [],
     person: {
+      name: this.props.navigation.getParam('name'),
       username: this.props.navigation.getParam('username'),
       phone: this.props.navigation.getParam('phone'),
+      photo: this.props.navigation.getParam('photo'),
     },
     messageList: [],
     region: {
@@ -59,6 +61,10 @@ class ChatPerson extends Component {
   componentDidMount() {
     console.log(this.state.person.username);
     console.log(Users.username);
+    this.getData();
+  }
+
+  getData = () => {
     db.database()
       .ref('messages/')
       .child(Users.username)
@@ -80,7 +86,8 @@ class ChatPerson extends Component {
     result += (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
 
     if (c.getDay() !== d.getDay()) {
-      result = d.getDay() + ' ' + d.getMonth() + ' ' + result;
+      result =
+        d.getFullYear() + '/' + d.getMonth() + '/' + d.getDate() + ' ' + result;
     }
 
     return result;
@@ -92,39 +99,43 @@ class ChatPerson extends Component {
   };
   sendMessages = () => {
     if (this.state.textMessage.length > 0) {
-      let msg = db
-        .database()
-        .ref('messages')
-        .child(Users.username)
-        .child(this.state.person.username)
-        .push().key;
-      let updates = {};
-      let message = {
-        message: this.state.textMessage,
-        time: Firebase.database.ServerValue.TIMESTAMP,
-        from: Users.username,
-      };
-      updates[
-        'messages/' +
-          Users.username +
-          '/' +
-          this.state.person.username +
-          '/' +
-          msg
-      ] = message;
-      updates[
-        'messages/' +
-          this.state.person.username +
-          '/' +
-          Users.username +
-          '/' +
-          msg
-      ] = message;
-      db.database()
-        .ref()
-        .update(updates);
-      this.setState({textMessage: ''});
+      this.ChatSend();
     }
+  };
+
+  ChatSend = () => {
+    let msg = db
+      .database()
+      .ref('messages')
+      .child(Users.username)
+      .child(this.state.person.username)
+      .push().key;
+    let updates = {};
+    let message = {
+      message: this.state.textMessage,
+      time: Firebase.database.ServerValue.TIMESTAMP,
+      from: Users.username,
+    };
+    updates[
+      'messages/' +
+        Users.username +
+        '/' +
+        this.state.person.username +
+        '/' +
+        msg
+    ] = message;
+    updates[
+      'messages/' +
+        this.state.person.username +
+        '/' +
+        Users.username +
+        '/' +
+        msg
+    ] = message;
+    db.database()
+      .ref()
+      .update(updates);
+    this.setState({textMessage: ''});
   };
 
   ChatRow = ({item}) => {
@@ -162,7 +173,7 @@ class ChatPerson extends Component {
   };
 
   sendLocation = async () => {
-    await Geolocation.getCurrentPosition(
+    await Geolocation.watchPosition(
       position => {
         this.setState({
           region: {
@@ -176,7 +187,7 @@ class ChatPerson extends Component {
       error => console.log(error.message),
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
-  }
+  };
 
   handelMap = () => {
     Alert.alert(
@@ -189,10 +200,12 @@ class ChatPerson extends Component {
         },
         {
           text: 'Yes',
-          // onPress: () => {
-          //   db.auth().signOut();
-          //   this.props.navigation.navigate('LoginScreen');
-          // },
+          onPress: () => {
+            this.setState({
+              textMessage: 'I Have Share My Location Check in Tab Dasboard Map',
+            });
+            this.ChatSend();
+          },
         },
       ],
       {cancelable: false},
@@ -210,11 +223,44 @@ class ChatPerson extends Component {
           </Left>
           <Body>
             <View style={{flexDirection: 'row'}}>
-              <Image
-                source={require('./../../../assets/blank.png')}
-                style={{width: 50, height: 50, borderRadius: 50}}
-              />
-              <View style={{flexDirection: 'column', marginLeft: 10}}>
+              {this.state.person.photo && (
+                <Image
+                  source={{
+                    uri: this.state.person.photo,
+                  }}
+                  style={{
+                    marginTop: 7,
+                    width: 50,
+                    height: 50,
+                    borderRadius: 50 / 2,
+                    borderColor: '#FFF6F4',
+                    overflow: 'hidden',
+                    borderWidth: 1,
+                    marginBottom: 10,
+                  }}
+                />
+              )}
+              {!this.state.person.photo && (
+                <Image
+                  source={require('./../../../assets/blank.png')}
+                  style={{
+                    marginTop: 7,
+                    width: 50,
+                    height: 50,
+                    borderRadius: 50 / 2,
+                    borderColor: '#FFF6F4',
+                    overflow: 'hidden',
+                    borderWidth: 1,
+                    marginBottom: 10,
+                  }}
+                />
+              )}
+              <View
+                style={{
+                  flexDirection: 'column',
+                  marginLeft: 10,
+                  marginTop: 10,
+                }}>
                 <Text style={{color: 'white', fontSize: 15}}>
                   {this.props.navigation.getParam('name')}
                 </Text>
@@ -225,10 +271,6 @@ class ChatPerson extends Component {
             </View>
           </Body>
           <Right>
-            <TouchableOpacity
-              onPress={() => this.handelMap()}>
-              <IconBar name="map-marker-alt" size={25} color="white" />
-            </TouchableOpacity>
             <TouchableOpacity style={{marginLeft: 20}}>
               <IconBar name="ellipsis-v" size={20} color="white" />
             </TouchableOpacity>
@@ -293,7 +335,7 @@ class ChatPerson extends Component {
                   name="send"
                   size={40}
                   style={{marginLeft: 5, marginRight: 5}}
-                  color="pink"
+                  color="#fd79a8"
                 />
               </TouchableOpacity>
             </View>

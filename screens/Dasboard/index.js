@@ -23,6 +23,7 @@ const ChatStack = createStackNavigator({
   ChatPerson,
   PersonDetail,
   Contact,
+  MapChat,
 });
 
 const ProfileStack = createStackNavigator({
@@ -111,6 +112,7 @@ const BottomNavigation = createMaterialBottomTabNavigator(
     inactiveColor: '#FDD3E4',
     showLabel: false,
     barStyle: {backgroundColor: '#FF8FB2'},
+    initialRouteName: 'Chat',
   },
 );
 

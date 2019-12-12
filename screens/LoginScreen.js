@@ -61,6 +61,7 @@ class LoginScreen extends Component {
           this.setState({isMessage: true});
           this.setState({errorMessage: error.message});
         });
+      this.setState({email: '', password: ''});
     }
   };
 

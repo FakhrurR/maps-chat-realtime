@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import {Input, Button, Form, Item, Label, Content} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -59,6 +59,23 @@ class EditProfile extends Component {
               Edit Profile
             </Text>
           </View>
+          {/* <View style={{alignItems: 'center'}}>
+            <TouchableOpacity
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 100,
+                height: 100,
+                borderRadius: 150 / 2,
+                borderColor: '#FFF6F4',
+                overflow: 'hidden',
+                borderWidth: 1,
+                marginTop: 30,
+              }}>
+              <Icon name="camera" color="#FF8FB2" size={30} />
+            </TouchableOpacity>
+          </View> */}
+
           <View style={{marginLeft: 20, marginRight: 20, marginBottom: 10}}>
             <Form>
               <Item floatingLabel>

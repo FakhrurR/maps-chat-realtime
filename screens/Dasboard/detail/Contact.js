@@ -12,13 +12,13 @@ import Users from '../Users';
 
 export default class Contact extends Component {
   static navigationOptions = {
-    title: 'Chats',
+    title: 'Contact',
     headerStyle: {
       backgroundColor: '#FF8FB2',
+      color: '#fff',
     },
+    headerTintColor: '#fff',
     headerTitleStyle: {
-      flex: 1,
-      textAlign: 'center',
       color: 'white',
     },
   };
@@ -75,18 +75,36 @@ export default class Contact extends Component {
               this.props.navigation.navigate('PersonDetail', item)
             }>
             <View>
-              <Image
-                source={require('./../../../assets/blank.png')}
-                style={{
-                  width: 50,
-                  height: 50,
-                  borderRadius: 50 / 2,
-                  borderColor: '#FFF6F4',
-                  overflow: 'hidden',
-                  borderWidth: 1,
-                  marginBottom: 10,
-                }}
-              />
+              {item.photo && (
+                <Image
+                  source={{
+                    uri: item.photo,
+                  }}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 50 / 2,
+                    borderColor: '#FFF6F4',
+                    overflow: 'hidden',
+                    borderWidth: 1,
+                    marginBottom: 10,
+                  }}
+                />
+              )}
+              {!item.photo && (
+                <Image
+                  source={require('./../../../assets/blank.png')}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 50 / 2,
+                    borderColor: '#FFF6F4',
+                    overflow: 'hidden',
+                    borderWidth: 1,
+                    marginBottom: 10,
+                  }}
+                />
+              )}
             </View>
           </TouchableOpacity>
           <View style={{marginLeft: 20, flex: 1}}>
