@@ -21,26 +21,6 @@
 ### Intro
 
 ---
-
-### Features
-
-- [x] Simple UI Design
-- [x] Manage Job (CRUD)
-- [x] List and Detail Job
-- [x] Search Job what you want based on location or keyword
-- [x] Manage Company (CRUD)
-- [x] Authentication with JWT
-
----
-
-### Requirments
-
-- [Nodejs](https://nodejs.org/en/) v10 LTS version
-- [Android SDK](https://developer.android.com/studio#downloads)
-- [Npm](https://www.npmjs.com/get-npm) package / [Yarn](https://yarnpkg.com/lang/en/docs/install/#mac-stable) package
-
----
-
 ### Features
 
 - [x] Simple UI chat design
@@ -49,6 +29,15 @@
 - [x] You can track where is all friend location
 - [x] Update Status
 - [x] Edit your photo profile
+
+---
+
+
+### Requirments
+
+- [Nodejs](https://nodejs.org/en/) v10 LTS version
+- [Android SDK](https://developer.android.com/studio#downloads)
+- [Npm](https://www.npmjs.com/get-npm) package / [Yarn](https://yarnpkg.com/lang/en/docs/install/#mac-stable) package
 
 ---
 
